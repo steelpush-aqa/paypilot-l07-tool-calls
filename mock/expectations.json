@@ -1,5 +1,91 @@
 [
   {
+    "id": "r-f06-step1-reply1",
+    "httpRequest": {
+      "method": "POST",
+      "path": ".*/chat/completions",
+      "body": {
+        "type": "JSON_PATH",
+        "jsonPath": "$.messages[-1:][?(@.role == 'user' && @.content == 'There is a duplicate charge on TX-0401 that I want to dispute.')]"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "content-type": [
+          "application/json"
+        ]
+      },
+      "body": {
+        "id": "r-f06-step1-reply1",
+        "object": "chat.completion",
+        "model": "anthropic/claude-haiku-5.5",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "tool_calls",
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [
+                {
+                  "id": "call_f06_elig",
+                  "type": "function",
+                  "function": {
+                    "name": "check_dispute_eligibility",
+                    "arguments": "{\"transaction_id\": \"TX-0401\", \"reason_code\": \"duplicate_charge\"}"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0
+        }
+      }
+    }
+  },
+  {
+    "id": "r-f06-step1-reply2",
+    "httpRequest": {
+      "method": "POST",
+      "path": ".*/chat/completions",
+      "body": {
+        "type": "JSON_PATH",
+        "jsonPath": "$.messages[-1:][?(@.role == 'tool' && @.tool_call_id == 'call_f06_elig')]"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "content-type": [
+          "application/json"
+        ]
+      },
+      "body": {
+        "id": "r-f06-step1-reply2",
+        "object": "chat.completion",
+        "model": "anthropic/claude-haiku-5.5",
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "TX-0401 is eligible for a duplicate-charge dispute. Opening a dispute is irreversible, so please reply yes to confirm and I will file it."
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0
+        }
+      }
+    }
+  },
+  {
     "id": "s1-step1-reply1",
     "httpRequest": {
       "method": "POST",
