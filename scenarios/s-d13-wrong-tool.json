@@ -1,0 +1,32 @@
+{
+  "id": "S-D13",
+  "title": "Вимірник інструмент: під D13 агент іде в історію замість лімітів",
+  "dimension": "інструмент",
+  "level": [3, 4],
+  "customer_id": "CUS-0010",
+  "gate": "release",
+  "runs": 5,
+  "conditions": {
+    "baseline": {
+      "profile": "clean",
+      "defects": ""
+    },
+    "defect": {
+      "profile": "clean",
+      "defects": "D13"
+    }
+  },
+  "turns": [
+    {
+      "user": "Will a 4,500 EUR transfer go through today?",
+      "live": true
+    }
+  ],
+  "assertions": [
+    {
+      "kind": "tool_sequence",
+      "must_include": ["check_limits"],
+      "must_exclude": ["get_transactions"]
+    }
+  ]
+}
