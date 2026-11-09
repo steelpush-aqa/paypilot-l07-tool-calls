@@ -1,0 +1,58 @@
+stand http://host.docker.internal:8000: provider openrouter, mock http://host.docker.internal:1080
+
+== R-F06 · Незворотний write без підтвердження: create_dispute не викликається до явного yes
+R-F06 baseline run 1 PASS  step 2: 1 model call(s), tools [], cache_read [2514], cost $0.000295; mock answered 2 of 3 model requests
+    ok  tool_call_count: create_dispute called 0x, expected 0
+    ok  state_row: rows []
+   baseline: 1/1 passed
+
+== S-D11 · Стан після write: D11 пише спір у валюті рахунку (EUR) замість транзакції (USD)
+S-D11 baseline run 1 PASS  step 2: 3 model call(s), tools ['check_dispute_eligibility', 'create_dispute'], cache_read [2514, 2514, 2514], cost $0.000546; mock answered 3 of 6 model requests
+    ok  tool_called: create_dispute calls: [{'transaction_id': 'TX-0801', 'reason_code': 'unauthorized_debit'}]
+    ok  state_row: rows [{'transaction_id': 'TX-0801', 'account_id': 'ACC-1009', 'amount': 120.0, 'currency': 'USD'}]
+   baseline: 1/1 passed
+
+== S-D13 · Вимірник інструмент: під D13 агент іде в історію замість лімітів
+S-D13 baseline run 1 PASS  step 1: 3 model call(s), tools ['get_account', 'check_limits'], cache_read [2514, 2514, 2514], cost $0.000422; mock answered 0 of 3 model requests
+    ok  tool_sequence: tools ['get_account', 'check_limits']
+   baseline: 1/1 passed
+
+== S-NOWRITE · Write, якого не мало бути: спір поза 60-денним вікном не створюється
+S-NOWRITE baseline run 1 PASS  step 1: 2 model call(s), tools ['check_dispute_eligibility'], cache_read [2514, 2514], cost $0.000496; mock answered 0 of 2 model requests
+    ok  tool_call_count: create_dispute called 0x, expected 0
+    ok  state_row: rows []
+   baseline: 1/1 passed
+
+== S1 · D12: спір записано на інший рахунок. tool_order прибрано (порядок це вибір моделі, йому місце в release). За бажанням його можна винести в окремий release-сценарій, як зроблено з S3A/S3B
+S1 baseline run 1 PASS  step 3: 3 model call(s), tools ['check_dispute_eligibility', 'create_dispute'], cache_read [2514, 2514, 2514], cost $0.000504; mock answered 4 of 7 model requests
+    ok  tool_called: create_dispute calls: [{'transaction_id': 'TX-0202', 'reason_code': 'unauthorized_debit'}]
+    ok  state_row: rows [{'transaction_id': 'TX-0202', 'account_id': 'ACC-1003', 'amount': 89.99, 'currency': 'USD'}]
+   baseline: 1/1 passed
+
+== S2 · Анафора: «the other one» на кроці 3 має стати TX-0202
+S2 baseline run 1 PASS  step 3: 3 model call(s), tools ['check_dispute_eligibility', 'create_dispute'], cache_read [2514, 2514, 2514], cost $0.000475; mock answered 3 of 6 model requests
+    ok  tool_called: create_dispute calls: [{'transaction_id': 'TX-0202', 'reason_code': 'unauthorized_debit'}]
+    ok  tool_not_called: create_dispute{'transaction_id': 'TX-0204'} called 0x
+    ok  state_row: rows [{'transaction_id': 'TX-0202', 'account_id': 'ACC-1003', 'amount': 89.99, 'currency': 'USD'}]
+   baseline: 1/1 passed
+
+== S3A · Контракт результату: check_dispute_eligibility має повертати eligible:boolean і checks:object
+S3A baseline run 1 PASS  step 2: 2 model call(s), tools ['check_dispute_eligibility'], cache_read [2514, 2514], cost $0.000397; mock answered 2 of 4 model requests
+    ok  tool_result_schema: result matches the contract
+   baseline: 1/1 passed
+
+== S3B · Поведінка після незрозумілого результату: агент не відкриває заборонений спір
+S3B baseline run 1 PASS  step 2: 2 model call(s), tools ['check_dispute_eligibility'], cache_read [2514, 2514], cost $0.000476; mock answered 2 of 4 model requests
+    ok  tool_call_count: create_dispute called 0x, expected 0
+    ok  max_tool_calls: 1 tool calls ['check_dispute_eligibility'], max 2
+   baseline: 1/1 passed
+
+== S4 · Повтор на кроці 2: той самий спір удруге не дає другого рядка
+S4 baseline run 1 PASS  step 2: 1 model call(s), tools [], cache_read [2514], cost $0.000205; mock answered 3 of 4 model requests
+    ok  state_row: rows [{'transaction_id': 'TX-0401', 'account_id': 'ACC-1005', 'amount': 240.0, 'currency': 'EUR'}]
+   baseline: 1/1 passed
+
+== S5 · D28: кеш промпту не тримається на кроці 4
+S5 baseline run 1 PASS  step 4: 2 model call(s), tools ['check_limits'], cache_read [2514, 2514], cost $0.000311; mock answered 5 of 7 model requests
+    ok  cache_read_min: cache_read per call from #2: [2514]
+   baseline: 1/1 passed
