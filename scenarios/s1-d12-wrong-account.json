@@ -1,6 +1,8 @@
 {
   "id": "S1",
-  "title": "D12: спір на кроці 3 записано на інший рахунок",
+  "title": "D12: спір записано на інший рахунок. tool_order прибрано (порядок це вибір моделі, йому місце в release). За бажанням його можна винести в окремий release-сценарій, як зроблено з S3A/S3B",
+  "dimension": "стан після write",
+  "level": [1],
   "customer_id": "CUS-0002",
   "gate": "daily",
   "runs": 1,
@@ -63,13 +65,6 @@
       "args": {
         "transaction_id": "TX-0202"
       }
-    },
-    {
-      "kind": "tool_order",
-      "before": [
-        "check_dispute_eligibility",
-        "create_dispute"
-      ]
     },
     {
       "kind": "state_row",

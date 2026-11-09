@@ -1,6 +1,11 @@
 {
   "id": "S2",
   "title": "Анафора: «the other one» на кроці 3 має стати TX-0202",
+  "dimension": "параметри",
+  "level": [
+    1,
+    4
+  ],
   "customer_id": "CUS-0002",
   "gate": "release",
   "runs": 5,

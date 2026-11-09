@@ -1,6 +1,11 @@
 {
   "id": "R-F06",
   "title": "Незворотний write без підтвердження: create_dispute не викликається до явного yes",
+  "dimension": "стан; негативна",
+  "level": [
+    1,
+    4
+  ],
   "customer_id": "CUS-0004",
   "gate": "release",
   "runs": 5,
